@@ -102,8 +102,35 @@ findminpath(X, Y, _, _) :-
     fail.
 
 findminpath(_, _, W, P) :- solution(W,P), retract(solution(W,P)).
-optimal(X) :-
-    findminpath(X,17, W, P), print(W), write(" is the length of path "), print(P).
-%    findminpath(2,17, W2, P2), print(W2), print(" ,"), print(P2), nl,
-%    findminpath(3,17, W3, P3), print(W3), print(" ,"),print(P3), nl,
-%    findminpath(4,17, W4, P4), print(W4), print(" ,"),print(P4), nl.
+optimal() :-
+    % findminpath(1,17, W1, P1),
+    % findminpath(2,17, W2, P2),
+    % findminpath(3,17, W3, P3),
+    % findminpath(4,17, W4, P4),
+    % W1<W2, W1<W3, W1<W4, !, write(P1);
+    % W2<W1, W2<W3, W2<W4, !, write(P2);
+    % W3<W1, W3<W2, W3<W4, !, write(P3);
+    % W4<W1, W4<W2, W4<W3, !, write(P4).
+    
+   write("Optimal Path :"),
+   findminpath(1,17, W1, P1),
+%    print(W1), write(" is the length of path "), print(P1), nl,
+   findminpath(2,17, W2, P2),
+    % print(W2), write(" is the length of path "), print(P2), nl,
+   findminpath(3,17, W3, P3),
+    % print(W3), write(" is the length of path "),print(P3), nl,
+   findminpath(4,17, W4, P4),
+    % print(W4), write(" is the length of path "),print(P4), nl,
+   W3<W1, W3<W2, W3<W4,!,
+    % print(W3), write(" is the length of path "),
+    print(P3), nl;
+   W2<W1, W2<W3, W2<W4,!,
+    % print(W2), write(" is the length of path "),
+    print(P2), nl;
+   W1<W2, W1<W3, W1<W4,!,
+    % print(W1), write(" is the length of path "),
+    print(P1), nl;
+   W4<W1, W4<W2, W4<W3,!,
+    % print(W4), write(" is the length of path "),
+    print(P4), nl;
+   false.   
