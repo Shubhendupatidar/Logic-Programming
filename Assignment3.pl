@@ -2,6 +2,8 @@ edges(1,5,4).
 edges(2,5,6).
 edges(3,5,8).
 edges(4,5,9).
+edges(1,6,10).
+edges(2,6,9).
 edges(3,6,3).
 edges(4,6,5).
 edges(5,7,3).
@@ -47,7 +49,10 @@ find_paths(A, B) :-
     path([A], B, Path, 0, Length),
     reverse(Path, DirectPath),
     printPath(DirectPath),
-    writef(' with evaluation %d\n', [Length]),
+%    L1=[],
+%    append(DirectPath, L1, L),
+%    writef(' with evaluation %d\n', [Length]),
+    nl,
     fail.
 printPath([]).
 printPath([X]) :-
@@ -56,14 +61,22 @@ printPath([X|T]) :-
     write(X),
     write(', '),
     printPath(T).
+all_paths() :-
+    (find_paths(1,17), true);
+    (find_paths(2,17), true);
+    (find_paths(3,17), true);
+    (find_paths(4,17), true);
+%cle    bagof(X, find_paths(1,17), Bag),
+    true.
 
-
-
-
-
-
-
-
-
-
-
+valid([]).
+valid([X]) :- X is 17.
+%    N is 17.
+valid([X, Y| Tail]) :-
+    edges(X,Y,_),
+    !,
+    valid([Y|Tail]);
+    edges(Y,X,_),
+    !,
+    valid([Y|Tail]);
+    false.
