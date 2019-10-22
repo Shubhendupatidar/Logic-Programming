@@ -61,17 +61,15 @@ printPath([X|T]) :-
     write(X),
     write(', '),
     printPath(T).
-all_paths() :-
+print_all_paths() :-
     (find_paths(1,17), true);
     (find_paths(2,17), true);
     (find_paths(3,17), true);
     (find_paths(4,17), true);
-%cle    bagof(X, find_paths(1,17), Bag),
     true.
 
 valid([]).
 valid([X]) :- X is 17.
-%    N is 17.
 valid([X, Y| Tail]) :-
     edges(X,Y,_),
     !,
@@ -80,3 +78,32 @@ valid([X, Y| Tail]) :-
     !,
     valid([Y|Tail]);
     false.
+findapath(X, Y, W, [X,Y], _) :- 
+    edges(X, Y, W).
+findapath(X, Y, W, [X|P], V) :- 
+    \+ member(X, V),
+    edges(X, Z, W1),
+    findapath(Z, Y, W2, P, [X|V]),
+    W is W1 + W2.
+:-dynamic(solution/2).                            
+findminpath(X, Y, W, P) :- 
+    \+ solution(_, _),
+    findapath(X, Y, W1, P1, []),
+    assertz(solution(W1, P1)),
+    !,
+    findminpath(X,Y,W,P).
+
+findminpath(X, Y, _, _) :- 
+    findapath(X, Y, W1, P1, []),
+    solution(W2, P2),
+    W1 < W2,
+    retract(solution(W2, P2)),
+    asserta(solution(W1, P1)),
+    fail.
+
+findminpath(_, _, W, P) :- solution(W,P), retract(solution(W,P)).
+optimal(X) :-
+    findminpath(X,17, W, P), print(W), write(" is the length of path "), print(P).
+%    findminpath(2,17, W2, P2), print(W2), print(" ,"), print(P2), nl,
+%    findminpath(3,17, W3, P3), print(W3), print(" ,"),print(P3), nl,
+%    findminpath(4,17, W4, P4), print(W4), print(" ,"),print(P4), nl.
