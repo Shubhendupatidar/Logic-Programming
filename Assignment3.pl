@@ -39,35 +39,36 @@ edges(14,17,5).
 edges(14,18,4).
 edges(17,18,8).
 
-path([B | Rest], B, [B | Rest], Length, Length).
-path([A | Rest], B, Path, CurrentLength, Length) :-
-    edges(A, C, X),
-    \+member(C, [A | Rest]),
-    NewLength is CurrentLength + X,
-    path([C, A | Rest], B, Path, NewLength, Length).
-find_paths(A, B) :-
-    path([A], B, Path, 0, Length),
-    reverse(Path, DirectPath),
-    printPath(DirectPath),
-%    L1=[],
-%    append(DirectPath, L1, L),
-%    writef(' with evaluation %d\n', [Length]),
-    nl,
-    fail.
-printPath([]).
-printPath([X]) :-
-    !, write(X).
-printPath([X|T]) :-
-    write(X),
-    write(', '),
-    printPath(T).
-print_all_paths() :-
-    (find_paths(1,17), true);
-    (find_paths(2,17), true);
-    (find_paths(3,17), true);
-    (find_paths(4,17), true);
-    true.
-
+path(17, Path, Path) :- !.
+path(S,[L1|L2], Path) :-
+    (edges(S, T, _) ; edges(T, S, _)),
+    not(member(T, [L1|L2])),
+    path(T, [T,L1|L2], Path).
+allpossiblepaths(S, Lf) :-
+    findall(Path, path(S, [S], Path), Lf).
+allpaths() :-
+    allpossiblepaths(1, Lf1),
+    allpossiblepaths(2, Lf2),
+    allpossiblepaths(3, Lf3),
+    allpossiblepaths(4, Lf4),
+    append(Lf1,Lf2,Tf1),
+    append(Lf3,Lf4,Tf2),
+    append(Tf1,Tf2,Lf),
+    reverselists(Lf, [], Lcf),
+    printresults(Lcf),
+    length(Lcf, Ls),
+    write(Ls).
+reverselists([],L, L):- !.
+reverselists([H|Tail], L, Fl) :- 
+    reverse(H, Hf),
+%    writef(Hf),
+    append([Hf], L, Lf),
+    reverselists(Tail, Lf, Fl).
+printresults([]):- !. 
+printresults([H|Tail]) :-
+    writeln(H),
+    printresults(Tail).
+   
 valid([]).
 valid([X]) :- X is 17.
 valid([X, Y| Tail]) :-
@@ -78,6 +79,8 @@ valid([X, Y| Tail]) :-
     !,
     valid([Y|Tail]);
     false.
+
+
 findapath(X, Y, W, [X,Y], _) :- 
     edges(X, Y, W).
 findapath(X, Y, W, [X|P], V) :- 
